@@ -16,7 +16,7 @@ int main() {
 }
 
 void sequential(double N) {
-	double x, y, Pi;
+	double x, y, Pi = 0;
 	for (double i = 1; i <= N; i ++) {
 		x = (1 / N) * (i - 0.5);
 		y = sqrt(1 - pow(x, 2));

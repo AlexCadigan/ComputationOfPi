@@ -13,7 +13,7 @@ using namespace std;
 
 int main() {
 	// Gets user input:
-	int numTrials, maxThreads, subInt;
+	int numTrials, subInt;
 	cout << "Enter the number of trials to run:\t";
 	cin >> numTrials;
 	cout << "Enter the number of sub-intervals on interval [0, 1] to use:\t";

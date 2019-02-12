@@ -9,42 +9,63 @@ COMP-481 Final Project
 #include <omp.h>
 #include "ComputePi.h"
 
-int main() {
-	double N = 1000;
+using namespace std;
 
-	double start = omp_get_wtime();
-	sequential(N);
-	double timeS = omp_get_wtime() - start;
-	start = omp_get_wtime();
-	parallel(N);
-	double timeP = omp_get_wtime() - start;
-	printf("Sequential Time:\t%f\n", timeS);
-	printf("Parallel Time:\t%f\n", timeP);
+int main() {
+	// Gets user input:
+	int numTrials, maxThreads, subInt;
+	cout << "Enter the number of trials to run:\t";
+	cin >> numTrials;
+	cout << "Enter the number of sub-intervals on interval [0, 1] to use:\t";
+	cin >> subInt;
+
+	// Stores the average times
+	double start, seqAve = 0, intAve;
+
+	// Runs sequential simulations
+	for (int trialNum = 0; trialNum < numTrials; trialNum ++) {
+		start = omp_get_wtime();
+		seq(subInt);
+		seqAve += omp_get_wtime() - start;
+	}
+	printf("Sequential Time:\t%f\n", seqAve / numTrials);
+
+	// Runs through the different thread amounts
+	for (int numThreads = 2; numThreads <= 64; numThreads *= 2) {
+		intAve = 0;
+		// Runs parallel simulations 
+		for (int trialNum = 0; trialNum < numTrials; trialNum ++) {
+			start = omp_get_wtime();
+			paraInt(subInt, numThreads);
+			intAve += omp_get_wtime() - start;
+		}
+		printf("Number of threads:\t%d\tInterval Time:\t%f\n", numThreads, intAve / numTrials);
+	}
 }
 
-void sequential(double N) {
+void seq(double N) {
 	double x, y, Pi = 0;
 	for (double i = 1; i <= N; i ++) {
 		x = (1 / N) * (i - 0.5);
 		y = sqrt(1 - pow(x, 2));
 		Pi += 4 * (y / N);
 	}
-
-	printf("Sequential:\t%f\n", Pi);
 }
 
-void parallel(double N) {
+void paraInt(double N, int numThreads) {
 	double Pi = 0;
-	#pragma omp parallel 
+	#pragma omp parallel num_threads(numThreads)
 	{
 		double x, y;
-		#pragma omp for reduction(+:Pi)
+		#pragma omp for reduction(+:Pi) schedule(auto)
 		for (int i = 1; i <= (int) N; i ++) {
 			x = (1 / N) * (i - 0.5);
 			y = sqrt(1 - pow(x, 2));
 			Pi += 4 * (y / N);
 		}
 	}
-
-	printf("Parallel:\t%f\n", Pi);
 }
+
+//Page 68 - calculation of pi through integration - figure 3.15
+
+// PAge 69 - figure 3.17 - Monte Carlo

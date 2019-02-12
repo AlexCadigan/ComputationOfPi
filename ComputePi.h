@@ -4,5 +4,5 @@ Jennifer Cho + Alex Cadigan
 COMP-481 Final Project
 */
 
-void sequential(double N);
-void parallel(double N);
+void seq(double N);
+void paraInt(double N, int numThreads);

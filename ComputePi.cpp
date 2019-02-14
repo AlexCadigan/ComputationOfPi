@@ -14,6 +14,7 @@ void seq(double N);
 void paraInterval(double N, int numThreads);
 void paraIntegral(int intervals, int numThreads);
 void paraMonteCarlo(int num_shots, int numThreads);
+void paraMonteCarloFixed(int num_shots, int numThreads);
 double rnd(unsigned int * seed);
 
 int main() {
@@ -35,8 +36,16 @@ int main() {
 	}
 	printf("Sequential Time:\t%f\n", seqAve / numTrials);
 
+
+/*
+Increase the thread amounts for running in Jigwe - find upper limit
+*/
+
+
+
+
 	// Runs through the different thread amounts
-	for (int numThreads = 2; numThreads <= 64; numThreads *= 2) {
+	for (int numThreads = 2; numThreads <= 1024; numThreads *= 2) {
 		intervalAve = 0, integralAve = 0, monteCarloAve = 0;
 		// Runs parallel simulations 
 		for (int trialNum = 0; trialNum < numTrials; trialNum ++) {
@@ -47,7 +56,7 @@ int main() {
 			paraIntegral(numCalc, numThreads);
 			integralAve += omp_get_wtime() - start;
 			start = omp_get_wtime();
-			paraMonteCarlo(numCalc, numThreads);
+			paraMonteCarloFixed(numCalc, numThreads);
 			monteCarloAve += omp_get_wtime() - start;
 		}
 		printf("Number of threads:\t%d\tInterval Time:\t%f\tIntegral Time:\t%f\tMonte Carlo Time:\t%f\n", numThreads, intervalAve / numTrials, integralAve / numTrials, monteCarloAve / numTrials);
@@ -101,6 +110,26 @@ void paraIntegral(int intervals, int numThreads) {
 /*
 Runs parallel Monte Carlo algorithm
 */
+
+void paraMonteCarloFixed(int num_shots, int numThreads) {
+	int num_hits = 0;
+	unsigned int seed = 42;
+	#pragma omp parallel for num_threads(numThreads) reduction(+:num_hits)
+	for (int shot = 0; shot < num_shots; shot ++) {
+		// unsigned int seed = 42 + omp_get_thread_num();
+		double x = (double) rand_r(& seed) / (double) RAND_MAX;
+		// printf("\nX:\t%f\n", x);
+		double y = (double) rand_r(& seed) / (double) RAND_MAX;
+		// printf("Y:\t%f\n", y);
+		// printf("X * X + Y * Y:\t%f\n", x * x + y * y);
+		if (x * x + y * y <= 1) {
+			num_hits = num_hits + 1;
+		}
+	}
+	double Pi = 4 * (double) num_hits / (double) num_shots;
+	printf("Pi:\t%f\n", Pi);
+}
+
 void paraMonteCarlo(int num_shots, int numThreads) {
 	unsigned int seeds[numThreads];
 	for (int thread = 0; thread < numThreads; thread ++) {
@@ -119,6 +148,10 @@ void paraMonteCarlo(int num_shots, int numThreads) {
 	double Pi = 4 * (double) num_hits / (double) num_shots;
 }
 
+
+/*
+Use rand_r for seed generation
+*/
 double rnd(unsigned int * seed) {
 	* seed = (1140671485 * (* seed) + 12820163) % (1 << 24);
 	return ((double) ( * seed)) / (1 << 24);

@@ -33,7 +33,7 @@ int main() {
 	// Runs through the different thread amounts
 	for (int numThreads = 2; numThreads <= 64; numThreads *= 2) {
 		intAve = 0;
-		// Runs parallel simulations 
+		// Runs parallel simulations
 		for (int trialNum = 0; trialNum < numTrials; trialNum ++) {
 			start = omp_get_wtime();
 			paraInt(subInt, numThreads);

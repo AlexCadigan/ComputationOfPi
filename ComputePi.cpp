@@ -17,38 +17,39 @@ double paraMonteCarlo(int num_shots, int numThreads);
 
 int main() {
 	// Gets user input:
-	int numTrials, numCalc;
+	int numTrials;
 	cout << "Enter the number of trials to run:\t";
 	cin >> numTrials;
-	cout << "Enter the number of calculation iterations to use:\t";
-	cin >> numCalc;
 
 	// Stores the average times
 	double start, seqAve = 0, intervalAve, integralAve, monteCarloAve, PiSeq, PiInterval, PiIntegral, PiMonte;
 
-	// Runs sequential simulations
-	for (int trialNum = 0; trialNum < numTrials; trialNum ++) {
-		start = omp_get_wtime();
-		PiSeq = seq(numCalc);
-		seqAve += omp_get_wtime() - start;
-	}
-	printf("T_S:\t%f\tE:\t%f%%\n", seqAve / numTrials, (fabs(M_PI - PiSeq) / M_PI) * 100);
-	// Runs through the different thread amounts
-	for (int numThreads = 2; numThreads <= 4096; numThreads *= 2) {
-		intervalAve = 0, integralAve = 0, monteCarloAve = 0;
-		// Runs parallel simulations 
+	for (int numCalc = 100; numCalc <= 1000000000; numCalc *= 10) {
+		printf("\n# Calc:\t%d\n", numCalc);
+		// Runs sequential simulations
 		for (int trialNum = 0; trialNum < numTrials; trialNum ++) {
 			start = omp_get_wtime();
-			PiInterval = paraInterval(numCalc, numThreads);
-			intervalAve += omp_get_wtime() - start;
-			start = omp_get_wtime();
-			PiIntegral = paraIntegral(numCalc, numThreads);
-			integralAve += omp_get_wtime() - start;
-			start = omp_get_wtime();
-			PiMonte = paraMonteCarlo(numCalc, numThreads);
-			monteCarloAve += omp_get_wtime() - start;
+			PiSeq = seq(numCalc);
+			seqAve += omp_get_wtime() - start;
 		}
-		printf("Th:\t%d\tT_Intv:\t%f\tE:\t%f%%\tT_Intg:\t%f\tE:\t%f%%\tT_M:\t%f\tE:\t%f%%\n", numThreads, intervalAve / numTrials, (fabs(M_PI - PiInterval) / M_PI) * 100, integralAve / numTrials, (fabs(M_PI - PiIntegral) / M_PI) * 100, monteCarloAve / numTrials, (fabs(M_PI - PiMonte) / M_PI) * 100);
+		printf("T_S:\t%f\tE:\t%f%%\n", seqAve / numTrials, (fabs(M_PI - PiSeq) / M_PI) * 100);
+		// Runs through the different thread amounts
+		for (int numThreads = 2; numThreads <= 2048; numThreads *= 2) {
+			intervalAve = 0, integralAve = 0, monteCarloAve = 0;
+			// Runs parallel simulations 
+			for (int trialNum = 0; trialNum < numTrials; trialNum ++) {
+				start = omp_get_wtime();
+				PiInterval = paraInterval(numCalc, numThreads);
+				intervalAve += omp_get_wtime() - start;
+				start = omp_get_wtime();
+				PiIntegral = paraIntegral(numCalc, numThreads);
+				integralAve += omp_get_wtime() - start;
+				start = omp_get_wtime();
+				PiMonte = paraMonteCarlo(numCalc, numThreads);
+				monteCarloAve += omp_get_wtime() - start;
+			}
+			printf("Th:\t%d\tT_Intv:\t%f\tE:\t%f%%\tT_Intg:\t%f\tE:\t%f%%\tT_M:\t%f\tE:\t%f%%\n", numThreads, intervalAve / numTrials, (fabs(M_PI - PiInterval) / M_PI) * 100, integralAve / numTrials, (fabs(M_PI - PiIntegral) / M_PI) * 100, monteCarloAve / numTrials, (fabs(M_PI - PiMonte) / M_PI) * 100);
+		}
 	}
 }
 

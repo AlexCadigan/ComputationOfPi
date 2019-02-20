@@ -21,10 +21,11 @@ int main() {
 	cout << "Enter the number of trials to run:\t";
 	cin >> numTrials;
 
-	// Stores the average times
-	double start, seqAve = 0, intervalAve, integralAve, monteCarloAve, PiSeq, PiInterval, PiIntegral, PiMonte;
+	// Stores the results
+	double start, seqAve, intervalAve, integralAve, monteCarloAve, PiSeq, PiInterval, PiIntegral, PiMonte;
 
-	for (int numCalc = 100; numCalc <= 1000000000; numCalc *= 10) {
+	// Runs through varying calculation amounts
+	for (int numCalc = 100; numCalc <= 10000000000; numCalc *= 10) {
 		printf("\n# Calc:\t%d\n", numCalc);
 		// Runs sequential simulations
 		for (int trialNum = 0; trialNum < numTrials; trialNum ++) {
@@ -54,7 +55,7 @@ int main() {
 }
 
 /*
-Runs sequential algorithm
+Sequential algorithm
 */
 double seq(double N) {
 	double x, y, Pi = 0;
@@ -67,7 +68,7 @@ double seq(double N) {
 }
 
 /*
-Runs parallel interval algorithm
+Parallel interval algorithm
 */
 double paraInterval(int N, int numThreads) {
 	double Pi = 0;
@@ -81,7 +82,7 @@ double paraInterval(int N, int numThreads) {
 }
 
 /*
-Runs parallel integral algorithm
+Parallel integral algorithm
 */
 double paraIntegral(int intervals, int numThreads) {
 	double integral = 0;
@@ -96,7 +97,7 @@ double paraIntegral(int intervals, int numThreads) {
 }
 
 /*
-Runs parallel Monte Carlo algorithm
+Parallel Monte Carlo algorithm
 */
 double paraMonteCarlo(int num_shots, int numThreads) {
 	int num_hits = 0;

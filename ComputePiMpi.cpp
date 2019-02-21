@@ -31,7 +31,7 @@ int main(int argc, char * argv[]) {
 	}
 
 	// Broadcast to all processors
-	MPI_Bcast(& numCalc, 1, MPI_INT, 0, MPI_COMM_WORLD);	
+	MPI_Bcast(& numCalc, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
 	// Interval algorithm
 	start = MPI_Wtime();
@@ -72,7 +72,7 @@ int main(int argc, char * argv[]) {
 
 	// Results
 	if (rank == 0) {
-		printf("P_Intv:\t%f\tT_Intv:\t%f\tE:\t%f\tP_Intg:\t%f\tT_Intg:\t%f\tE:\t%f\tP_Monte:\t%f\tT_Monte:\t%f\tE:\t%f\n", PiInterval, interval, (fabs(M_PI - PiInterval) / M_PI) * 100, PiIntegral, integral, (fabs(M_PI - PiIntegral) / M_PI) * 100, 4 * (double) tempNumHits / (double) numCalc, monteCarlo, (fabs(M_PI - (4 * (double) tempNumHits / (double) numCalc)) / M_PI) * 100);
+		printf("T_Intv:\t%f\tE:\t%f\tT_Intg:\t%f\tE:\t%f\tT_Monte:\t%f\tE:\t%f\n", interval, (fabs(M_PI - PiInterval) / M_PI) * 100, integral, (fabs(M_PI - PiIntegral) / M_PI) * 100, monteCarlo, (fabs(M_PI - (4 * (double) tempNumHits / (double) numCalc)) / M_PI) * 100);
 	}
 
 	MPI_Finalize();

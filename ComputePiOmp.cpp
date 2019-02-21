@@ -25,7 +25,7 @@ int main() {
 	double start, seqAve, intervalAve, integralAve, monteCarloAve, PiSeq, PiInterval, PiIntegral, PiMonte;
 
 	// Runs through varying calculation amounts
-	for (int numCalc = 100; numCalc <= 10000000000; numCalc *= 10) {
+	for (int numCalc = 100; numCalc <= 1000000000; numCalc *= 10) {
 		printf("\n# Calc:\t%d\n", numCalc);
 		// Runs sequential simulations
 		for (int trialNum = 0; trialNum < numTrials; trialNum ++) {
